@@ -13,8 +13,13 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // typedRoutes est maintenant une option de premier niveau en v16
+  // typedRoutes est une option de premier niveau en v16
   typedRoutes: true, 
+  
+  // Cette ligne vide est cruciale pour autoriser le build 
+  // quand on utilise des plugins Webpack (comme PWA) avec Next 16
+  turbopack: {}, 
+
   images: {
     remotePatterns: [
       {
@@ -23,9 +28,14 @@ const nextConfig = {
       },
     ],
   },
-  // On force Next.js à ne pas s'arrêter pour des erreurs de structure mineures
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true },
+
+  // On ignore les erreurs mineures pour garantir que le build aille au bout
+  eslint: { 
+    ignoreDuringBuilds: true 
+  },
+  typescript: { 
+    ignoreBuildErrors: true 
+  },
 };
 
 export default withPWA(nextConfig);
