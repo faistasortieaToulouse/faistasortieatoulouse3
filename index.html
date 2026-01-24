@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carte des &Eacute;v&eacute;nements Autonome</title>
+
+
+<!-- Chargement de Tailwind CSS pour le style -->
+  <script src="https://cdn.tailwindcss.com"></script>
+<!-- Chargement de Leaflet CSS et JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+/* S'assurer que le conteneur de la carte a une hauteur définie */
+#map-container {
+height: 500px;
+width: 100%;
+}
+/* Styles personnalisés pour la carte */
+.leaflet-popup-content-wrapper {
+border-radius: 0.75rem; /* rounded-xl */
+padding: 0;
+}
+.leaflet-popup-content {
+margin: 0;
+padding: 0.75rem;
+}
+  </style>
+</head>
+<body class="bg-gray-100 p-8 font-sans">
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+<h1 class="text-3xl font-bold mb-6 text-indigo-700 text-center flex items-center justify-center">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-red-500" viewbox="0 0 24 24" fill="currentColor">
+<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z">
+</path>
+Carte des &Eacute;v&eacute;nements
+</svg></h1>
+
+<!-- Conteneur pour l'affichage du statut et de la carte -->
+<div id="status-message" class="text-center mb-4 text-gray-600">
+Chargement de la carte...
+</div>
+
+<div id="map-container" class="rounded-lg overflow-hidden border-4 border-indigo-500 shadow-xl">
+<!-- La carte Leaflet sera injectée ici -->
+</div>
+
+</div>
+
+<script>
+// --- 1. Données d'Exemple ---
+const eventsData = [
+{ id: 'e1', name: 'Après-midi jeu de société - Board game afternoon', location: '46, rue du Taur, 31000 Toulouse' },
+{ id: 'e2', name: 'salon de thé des langues - language tea room', location: '8 Place du Capitole, 31000 Toulouse' },
+{ id: 'e3', name: 'Rencontre des développeurs Python', location: '12 Rue de la Bourse, 31000 Toulouse' },
+{ id: 'e4', name: 'Cours de Yoga plein air', location: 'Jardin des Plantes, 31400 Toulouse' },
+{ id: 'e5', name: 'Visite guidée du musée des Augustins', location: '21 Rue de Metz, 31000 Toulouse' },
+];
+// --- 2. Géocodage Simulé (Bypass API Key) ---
+function mockGeocode(address) {
+let hash = 0;
+for (let i = 0; i < address.length; i++) {
+const char = address.charCodeAt(i);
+hash = ((hash << 5) - hash) + char;
+hash |= 0; // Convert to 32bit integer
+}
+// Base des coordonnées (Toulouse)
+const baseLat = 43.6047;
+const baseLng = 1.4442;
+// Créer un offset dispersé
+const latOffset = ((hash % 1000) / 10000) - 0.05;
+const lngOffset = (((hash * 7) % 1000) / 10000) - 0.05;
+return {
+lat: baseLat + latOffset,
+lng: baseLng + lngOffset,
+};
+}
+// --- 3. Initialisation de la Carte ---
+window.onload = function() {
+const mapElement = document.getElementById('map-container');
+const statusElement = document.getElementById('status-message');
+if (eventsData.length === 0) {
+statusElement.innerHTML = '<p class="text-red-500 font-semibold">Aucun événement à afficher.</p>';
+return;
+}
+// Géocodage de toutes les adresses
+const eventsWithCoords = eventsData
+.filter(event => event.location && event.location.trim().length > 0)
+.map(event => {
+const coords = mockGeocode(event.location);
+return { ...event, latitude: coords.lat, longitude: coords.lng };
+});
+if (eventsWithCoords.length === 0) {
+statusElement.innerHTML = '<p class="text-red-500 font-semibold">Aucun événement avec adresse valide n\'a pu être géocodé.</p>';
+return;
+}
+statusElement.innerHTML = `<p class="text-green-600">Carte chargée avec ${eventsWithCoords.length} événements.</p>`;
+// Déterminer le centre de la carte à partir du premier événement
+const initialCoords = [eventsWithCoords[0].latitude, eventsWithCoords[0].longitude];
+// 3.1 Initialiser Leaflet Map
+const map = L.map(mapElement).setView(initialCoords, 13);
+// 3.2 Ajouter la couche de tuiles OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributeurs'
+}).addTo(map);
+// 3.3 Créer une icône de marqueur personnalisée (SVG/Base64)
+const customIcon = L.icon({
+iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzQzMzZhYSI+PHBhdGggZD0iTTEyIDBDNi41IDAgMiA0LjMgMiA5LjZjMCAzLjYgMi4zIDYuOSA1LjEgOC41TDEyIDI0TDE2LjkgMTguMWMyLjgtMS42IDUuMS00LjkgNS4xLTguNWMwLTUuMy00LjUtOS42LTktOS42em0wIDEzYy0xLjcgMC0zLTMuMS0zLTZzMS4zLTYgMy02IDMgMy4xIDMgNnMtMS4zIDYtMyA2eiIvPjwvc3ZnPg==',
+iconSize: [30, 42],
+iconAnchor: [15, 42],
+popupAnchor: [0, -42]
+});
+// 3.4 Ajouter les marqueurs
+const bounds = [];
+eventsWithCoords.forEach(event => {
+const latLng = [event.latitude, event.longitude];
+bounds.push(latLng);
+const marker = L.marker(latLng, { icon: customIcon }).addTo(map);
+// Créer le contenu du popup
+const popupContent = `
+<div class="p-1">
+<strong class="text-indigo-600 text-lg">${event.name}</strong>
+<br />
+<span class="text-sm text-gray-700">${event.location}</span>
+</div>
+`;
+marker.bindPopup(popupContent);
+});
+// 3.5 Ajuster la vue pour englober tous les marqueurs
+if (bounds.length > 0) {
+map.fitBounds(bounds, { padding: [20, 20] });
+}
+};
+</script>
+</body>
+</html>

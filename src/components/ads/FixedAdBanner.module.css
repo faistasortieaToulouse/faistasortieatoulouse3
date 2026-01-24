@@ -1,0 +1,16 @@
+/* components/ads/FixedAdBanner.module.css */
+
+.adContainer {
+  /* Ancre la bannière en bas de l'écran */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Assurez-vous qu'elle est au-dessus du contenu de la page */
+
+  /* Styles pour l'aspect visuel */
+  background-color: #f0f0f0;
+  padding: 2px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Important pour les bannières adaptatives */
+}

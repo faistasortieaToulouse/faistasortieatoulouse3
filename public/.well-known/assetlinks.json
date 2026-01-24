@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.ftst.twa",
+      "sha256_cert_fingerprints": [
+        "42:2C:BE:CF:05:60:57:3A:5E:4A:F3:1B:E0:E8:80:D4:64:BA:43:A0:4B:19:C8:C4:1E:4D:54:2D:CB:8A:E7:BA"
+      ]
+    }
+  }
+]
