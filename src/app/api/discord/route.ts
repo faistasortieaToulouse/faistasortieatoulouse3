@@ -1,43 +1,81 @@
+// src/app/api/discord/route.ts
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
-const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
-const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+// Nettoyage des variables : on sécurise les entrées du .env
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID?.replace(/\D/g, ''); 
+const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN?.trim();
 
 export async function GET() {
+  // 1. Vérification de la configuration
   if (!DISCORD_GUILD_ID || !DISCORD_BOT_TOKEN) {
-    return NextResponse.json({ error: 'Configuration Discord manquante' }, { status: 500 });
+    console.error("❌ Config Discord manquante dans .env");
+    return NextResponse.json(
+      { error: 'Configuration Discord incomplète', events: [] }, 
+      { status: 200 }
+    );
   }
 
   try {
-    // --- Widget (canaux + membres) - public ---
-    const widgetRes = await fetch(`https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`, {
-      cache: 'no-store',
-    });
-    const widgetData = widgetRes.ok ? await widgetRes.json() : { members: [], channels: [] };
-
-    // --- Événements à venir - nécessite token bot ---
+    // 2. Appel à l'API Discord avec Cache (60 secondes)
+    // Cela évite l'erreur 429 si tu rafraîchis trop souvent
     const eventsRes = await fetch(
-      `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/events?with_user_count=true`,
+      `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
       {
-        headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` },
-        cache: 'no-store',
-      }
-    );
-    const eventsData = eventsRes.ok ? await eventsRes.json() : [];
-
-    // --- Retour combiné ---
-    return NextResponse.json(
-      { widget: widgetData, events: eventsData },
-      {
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        headers: { 
+          Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+          'Content-Type': 'application/json',
         },
+        next: { revalidate: 60 } // Cache les données pendant 1 minute
       }
     );
-  } catch (err) {
-    console.error('❌ Erreur Discord API :', err);
-    return NextResponse.json({ error: 'Impossible de charger les données Discord.' }, { status: 500 });
+
+    // Gestion spécifique du Rate Limit (429) pour informer le client
+    if (eventsRes.status === 429) {
+      console.warn("⚠️ Discord Rate Limit atteint");
+      return NextResponse.json(
+        { error: 'Discord est un peu fatigué, réessayez dans quelques secondes.', events: [] },
+        { status: 200 }
+      );
+    }
+
+    if (!eventsRes.ok) {
+      const errorText = await eventsRes.text();
+      console.error(`❌ Discord API Error ${eventsRes.status}:`, errorText);
+      return NextResponse.json(
+        { error: `Erreur Discord (${eventsRes.status})`, events: [] }, 
+        { status: 200 }
+      );
+    }
+
+    const rawEvents = await eventsRes.json();
+    const dataToProcess = Array.isArray(rawEvents) ? rawEvents : [];
+
+    // 3. Normalisation des données
+    const normalizedEvents = dataToProcess.map((ev: any) => ({
+      id: ev.id,
+      title: ev.name, 
+      description: ev.description || "",
+      date: ev.scheduled_start_time, 
+      location: ev.entity_metadata?.location || "Serveur Discord",
+      image: ev.image 
+        ? `https://cdn.discordapp.com/guild-events/${ev.id}/${ev.image}.png?size=1024` 
+        : null,
+      source: "Discord"
+    }));
+
+    // 4. Réponse finale
+    return NextResponse.json({ 
+      total: normalizedEvents.length, 
+      events: normalizedEvents 
+    });
+
+  } catch (err: any) {
+    console.error('❌ Erreur critique API Discord :', err.message);
+    return NextResponse.json(
+      { error: 'Impossible de joindre Discord pour le moment.', events: [] }, 
+      { status: 200 }
+    );
   }
 }

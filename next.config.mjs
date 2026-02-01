@@ -1,4 +1,3 @@
-// next.config.mjs
 import withPWAInit from 'next-pwa';
 import runtimeCaching from 'next-pwa/cache.js';
 
@@ -13,12 +12,24 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // typedRoutes est une option de premier niveau en v16
-  typedRoutes: true, 
-  
-  // Cette ligne vide est cruciale pour autoriser le build 
-  // quand on utilise des plugins Webpack (comme PWA) avec Next 16
-  turbopack: {}, 
+  typedRoutes: true,
+  turbopack: {},
+
+  // 1. CONFIGURATION DES HEADERS CORS
+  async headers() {
+    return [
+      {
+        // Applique ceci à toutes tes routes d'API
+        source: "/api/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          { key: "Access-Control-Allow-Origin", value: "*" }, // Autorise tous les ports (9001, 9002)
+          { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+          { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
+        ],
+      },
+    ];
+  },
 
   images: {
     remotePatterns: [
@@ -29,10 +40,6 @@ const nextConfig = {
     ],
   },
 
-  // On ignore les erreurs mineures pour garantir que le build aille au bout
-  eslint: { 
-    ignoreDuringBuilds: true 
-  },
   typescript: { 
     ignoreBuildErrors: true 
   },

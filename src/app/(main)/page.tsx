@@ -4,15 +4,12 @@ import { DiscordChannel, DiscordEvent, DiscordWidgetData } from '@/types/types';
 import { TimeWeatherBar } from '@/components/time-weather-bar';
 import Image from 'next/image';
 import { ClientOnly } from '@/components/ClientOnly';
-// import ftsLogo from '../../../public/icons/logoFTS180iphone.jpg';
 
 export const revalidate = 300;
 
 const GUILD_ID = '1422806103267344416';
 const POLLS_CHANNEL_ID = '1422806103904882842';
-
-// MODIFICATION CLÉ: Remplacement de l'URL Firebase par le chemin local statique.
-const FTS_LOGO_URL = '/icons/logoFTS180iphone.jpg'; // <-- MODIFICATION CLÉ: Remplacer l'objet par le chemin string
+const FTS_LOGO_URL = '/icons/logoFTS180iphone.jpg';
 
 export default async function DashboardPage() {
   const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN || '';
@@ -114,19 +111,21 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      {/* TimeWeatherBar full width */}
+      {/* TimeWeatherBar uniquement côté client */}
       <ClientOnly>
         <TimeWeatherBar />
       </ClientOnly>
 
-      {/* Client Component pour le dashboard interactif */}
-      <DashboardClient
-        discordData={discordData}
-        discordPolls={discordPolls}
-        eventsData={eventsData}
-        totalMembers={totalMembersCount}
-        ftsLogoUrl={FTS_LOGO_URL}
-      />
+      {/* Dashboard interactif côté client uniquement */}
+      <ClientOnly>
+        <DashboardClient
+          discordData={discordData}
+          discordPolls={discordPolls}
+          eventsData={eventsData}
+          totalMembers={totalMembersCount}
+          ftsLogoUrl={FTS_LOGO_URL}
+        />
+      </ClientOnly>
     </div>
   );
 }
