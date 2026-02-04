@@ -4,6 +4,9 @@ import { DiscordChannel, DiscordEvent, DiscordWidgetData } from '@/types/types';
 import { TimeWeatherBar } from '@/components/time-weather-bar';
 import Image from 'next/image';
 import { ClientOnly } from '@/components/ClientOnly';
+// --- AJOUT DES IMPORTS POUR LE JSON ---
+import fs from 'fs';
+import path from 'path';
 
 export const revalidate = 300;
 
@@ -11,8 +14,25 @@ const GUILD_ID = '1422806103267344416';
 const POLLS_CHANNEL_ID = '1422806103904882842';
 const FTS_LOGO_URL = '/icons/logoFTS180iphone.jpg';
 
+// --- AJOUT DE LA FONCTION DE LECTURE ---
+function getWeeklyStats() {
+  try {
+    const filePath = path.join(process.cwd(), 'data', 'stats-hebdo.json');
+    if (fs.existsSync(filePath)) {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    }
+    return null;
+  } catch (error) {
+    console.error("Erreur lecture JSON:", error);
+    return null;
+  }
+}
+
 export default async function DashboardPage() {
   const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN || '';
+
+// 1. AJOUTE CETTE LIGNE ICI (C'est elle qui manquait !)
+  const stats = getWeeklyStats();
 
   // --- Fetch Channels ---
   let channelsData: DiscordChannel[] = [];
@@ -119,6 +139,7 @@ export default async function DashboardPage() {
       {/* Dashboard interactif côté client uniquement */}
       <ClientOnly>
         <DashboardClient
+stats={stats} // On passe les données lues du fichier JSON
           discordData={discordData}
           discordPolls={discordPolls}
           eventsData={eventsData}

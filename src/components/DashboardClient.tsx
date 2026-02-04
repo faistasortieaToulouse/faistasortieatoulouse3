@@ -31,6 +31,7 @@ const TimeWeatherBar = dynamic(
 );
 
 interface DashboardClientProps {
+  stats: any; // Ajout de la prop pour recevoir les données du JSON
   discordData: DiscordWidgetData & { presence_count?: number };
   discordPolls: any[];
   eventsData: DiscordEvent[];
@@ -39,6 +40,7 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({
+  stats, // On récupère stats ici
   discordData,
   discordPolls,
   eventsData,
@@ -104,6 +106,54 @@ export default function DashboardClient({
     <Carousel images={carouselImages} />
   </div>
 </section>
+
+          {/* ✅ SECTION STATISTIQUES HEBDOMADAIRES */}
+      {stats && (
+        <section className="w-full max-w-4xl mx-auto">
+          <Card className="p-5 border-none bg-slate-50 dark:bg-slate-900/50 shadow-sm rounded-[2rem]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              
+              {/* Colonne Gauche : Détails */}
+              <div>
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center md:text-left">
+                  Nombre d'événements
+                </h3>
+                <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                  <StatItem label="Evènements sur Meetup" value={stats.detailsLive.meetup} color="text-pink-600" />
+                  <StatItem label="Sorties Cinéma" value={stats.detailsLive.cinema} color="text-purple-600" />
+                  <StatItem label="Evènements sur l'Agenda" value={stats.detailsLive.agenda} color="text-blue-600" />
+                  <StatItem label="Actualités de sorties de Jeux" value={stats.detailsLive.jeux} color="text-orange-600" />
+                </div>
+              </div>
+
+{/* Colonne Droite : Totaux */}
+<div className="flex flex-col gap-3">
+  {/* Articles publiés (inchangé) */}
+  <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center transition-transform hover:scale-[1.02]">
+    <span className="text-xs font-bold text-slate-500 uppercase">Articles publiés</span>
+    <span className="text-3xl font-black text-slate-800 dark:text-white">{stats.totalArticles}</span>
+  </div>
+
+  {/* ✅ NOUVEAU TOTAL CALCULÉ : Meetup + Agenda */}
+  <div className="bg-primary p-4 rounded-2xl shadow-lg shadow-primary/20 flex justify-between items-center text-white transition-transform hover:scale-[1.02]">
+    <div className="flex flex-col">
+      <span className="text-xs font-bold uppercase opacity-90">Total Sorties</span>
+      <span className="text-[10px] opacity-75 font-medium italic">(Meetup + Agenda)</span>
+    </div>
+    <span className="text-3xl font-black">
+      {stats.detailsLive.meetup + stats.detailsLive.agenda}
+    </span>
+  </div>
+
+  <p className="text-[9px] text-center text-slate-400 font-medium italic mt-1">
+    Données arrêtées au {new Date(stats.lastUpdate).toLocaleDateString('fr-FR')}
+  </p>
+</div>
+
+            </div>
+          </Card>
+        </section>
+      )}
 
       {/* Stats rapides */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -254,6 +304,19 @@ export default function DashboardClient({
 
 </section>
 
+    </div>
+  );
+}
+
+function StatItem({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="flex flex-col items-center md:items-start px-2">
+      <span className="text-[10px] font-bold text-slate-500 uppercase truncate w-full text-center md:text-left tracking-tighter">
+        {label}
+      </span>
+      <span className={`text-2xl font-black ${color}`}>
+        {value}
+      </span>
     </div>
   );
 }
