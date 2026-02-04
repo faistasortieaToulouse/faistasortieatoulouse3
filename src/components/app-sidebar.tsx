@@ -13,6 +13,7 @@ import { Map, LifeBuoy } from "lucide-react";
 const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "https://discord.com/channels/1422806103267344416/1422806103904882842", icon: MessageSquare, label: "Sorties à Toulouse", external: true },
+  { href: "https://ftstoulouse.vercel.app/", icon: MessageSquare, label: "Agenda à Toulouse", external: true },
   { href: "https://discord.com/channels/1422806103267344416/1422806103904882842", icon: MessageSquare, label: "Discussions", external: true },
   { href: "/tourisme-offices", icon: Footprints, label: "Organise tes Balades" },
   { href: "/organiser-randos", icon: Mountain, label: "Organise tes Randos" },

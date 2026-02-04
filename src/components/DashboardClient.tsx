@@ -6,7 +6,7 @@ import Image, { StaticImageData } from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Users, Calendar as CalendarIcon, BellRing, Store, Share2 } from "lucide-react";
+import { Users, Calendar as CalendarIcon, BellRing, Store, Share2, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 import { DiscordEvent, DiscordWidgetData, CarouselImage } from "@/types/types";
@@ -107,48 +107,74 @@ export default function DashboardClient({
   </div>
 </section>
 
-          {/* ✅ SECTION STATISTIQUES HEBDOMADAIRES */}
-      {stats && (
-        <section className="w-full max-w-4xl mx-auto">
-          <Card className="p-5 border-none bg-slate-50 dark:bg-slate-900/50 shadow-sm rounded-[2rem]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-              
-              {/* Colonne Gauche : Détails */}
-              <div>
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center md:text-left">
-                  Nombre d'événements
-                </h3>
-                <div className="grid grid-cols-2 gap-y-4 gap-x-2">
-                  <StatItem label="Evènements sur Meetup" value={stats.detailsLive.meetup} color="text-pink-600" />
-                  <StatItem label="Sorties Cinéma" value={stats.detailsLive.cinema} color="text-purple-600" />
-                  <StatItem label="Evènements sur l'Agenda" value={stats.detailsLive.agenda} color="text-blue-600" />
-                  <StatItem label="Actualités de sorties de Jeux" value={stats.detailsLive.jeux} color="text-orange-600" />
-                </div>
-              </div>
+{/* ✅ SECTION STATISTIQUES HEBDOMADAIRES */}
+          {stats && (
+            <section className="w-full max-w-4xl mx-auto">
+              <Card className="p-5 border-none bg-slate-50 dark:bg-slate-900/50 shadow-sm rounded-[2rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                  
+                  {/* Colonne Gauche : Détails avec liens */}
+                  <div>
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center md:text-left">
+                      Consulter les événements ↗
+                    </h3>
+                    <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                        <StatItem label="Evènements sur Meetup" value={stats.detailsLive.meetup} color="text-pink-600" />
+                      </a>
+                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                        <StatItem label="Sorties Cinéma" value={stats.detailsLive.cinema} color="text-purple-600" />
+                      </a>
+                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                        <StatItem label="Evènements sur l'Agenda" value={stats.detailsLive.agenda} color="text-blue-600" />
+                      </a>
+                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                        <StatItem label="Sorties de Jeux" value={stats.detailsLive.jeux} color="text-orange-600" />
+                      </a>
+                    </div>
+                  </div>
 
-{/* Colonne Droite : Totaux */}
-<div className="flex flex-col gap-3">
-  {/* Articles publiés (inchangé) */}
-  <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center transition-transform hover:scale-[1.02]">
-    <span className="text-xs font-bold text-slate-500 uppercase">Articles publiés</span>
-    <span className="text-3xl font-black text-slate-800 dark:text-white">{stats.totalArticles}</span>
-  </div>
-
-  {/* ✅ NOUVEAU TOTAL CALCULÉ : Meetup + Agenda */}
-  <div className="bg-primary p-4 rounded-2xl shadow-lg shadow-primary/20 flex justify-between items-center text-white transition-transform hover:scale-[1.02]">
+                  {/* Colonne Droite : Totaux et Bouton d'action */}
+                  <div className="flex flex-col gap-3">
+{/* Bloc Articles publiés cliquable */}
+<a 
+  href="https://ftstoulouse.vercel.app/" 
+  target="_blank" 
+  rel="noopener noreferrer" 
+  className="group block"
+>
+  <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center transition-all group-hover:shadow-md group-hover:border-primary/30 group-hover:scale-[1.02]">
     <div className="flex flex-col">
-      <span className="text-xs font-bold uppercase opacity-90">Total Sorties</span>
-      <span className="text-[10px] opacity-75 font-medium italic">(Meetup + Agenda)</span>
+      <span className="text-xs font-bold text-slate-500 uppercase">Articles publiés</span>
+      <span className="text-[10px] text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+        Voir le blog ↗
+      </span>
     </div>
-    <span className="text-3xl font-black">
-      {stats.detailsLive.meetup + stats.detailsLive.agenda}
+    <span className="text-3xl font-black text-slate-800 dark:text-white">
+      {stats.totalArticles}
     </span>
   </div>
+</a>
 
-  <p className="text-[9px] text-center text-slate-400 font-medium italic mt-1">
-    Données arrêtées au {new Date(stats.lastUpdate).toLocaleDateString('fr-FR')}
-  </p>
-</div>
+                    <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="group">
+                      <div className="bg-primary p-4 rounded-2xl shadow-lg shadow-primary/20 flex justify-between items-center text-white transition-all group-hover:bg-primary/90 group-hover:scale-[1.02]">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold uppercase opacity-90">Total Sorties</span>
+                          <span className="text-[10px] opacity-75 font-medium italic">(Meetup + Agenda)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-3xl font-black">
+                            {stats.detailsLive.meetup + stats.detailsLive.agenda}
+                          </span>
+                          <Share2 className="h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </div>
+                    </a>
+
+                    <p className="text-[9px] text-center text-slate-400 font-medium italic mt-1">
+                      Données arrêtées au {new Date(stats.lastUpdate).toLocaleDateString('fr-FR')}
+                    </p>
+                  </div>
 
             </div>
           </Card>
@@ -179,6 +205,25 @@ export default function DashboardClient({
           </div>
         </Card>
       </div>
+
+{/* ✅ Carte 3 : Lien vers le Guide (ftstoulouse.vercel.app) */}
+  <a 
+    href="https://ftstoulouse.vercel.app/" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="group"
+  >
+    <Card className="p-4 flex flex-col justify-between w-full h-auto min-h-[6rem] border-primary/20 transition-all group-hover:shadow-md group-hover:border-primary group-hover:bg-primary/5">
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="text-sm font-bold text-primary">FTS Toulouse ↗</div>
+          <div className="text-lg font-black leading-tight mt-1">Guide des sorties à Toulouse</div>
+          <div className="text-[10px] text-gray-500 mt-1 uppercase font-semibold">Consulter le site web</div>
+        </div>
+        <MapPin className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+      </div>
+    </Card>
+  </a>
 
       {/* Menu dashboard */}
       <DashboardMenu ftsLogoUrl={ftsLogoUrl} />
@@ -310,9 +355,9 @@ export default function DashboardClient({
 
 function StatItem({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="flex flex-col items-center md:items-start px-2">
-      <span className="text-[10px] font-bold text-slate-500 uppercase truncate w-full text-center md:text-left tracking-tighter">
-        {label}
+    <div className="flex flex-col items-center md:items-start px-3 py-2 bg-white dark:bg-slate-800/40 rounded-xl border border-transparent hover:border-slate-200 transition-all cursor-pointer shadow-sm">
+      <span className="text-[9px] font-bold text-slate-500 uppercase w-full text-center md:text-left leading-tight mb-1">
+        {label} ↗
       </span>
       <span className={`text-2xl font-black ${color}`}>
         {value}
