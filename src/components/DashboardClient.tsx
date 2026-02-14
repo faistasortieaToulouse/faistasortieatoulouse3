@@ -119,18 +119,28 @@ export default function DashboardClient({
                       Consulter les événements ↗
                     </h3>
                     <div className="grid grid-cols-2 gap-y-4 gap-x-2">
-                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                      <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
                         <StatItem label="Evènements sur Meetup" value={stats.detailsLive.meetup} color="text-pink-600" />
                       </a>
-                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                      <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
                         <StatItem label="Sorties Cinéma" value={stats.detailsLive.cinema} color="text-purple-600" />
                       </a>
-                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                      <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
                         <StatItem label="Evènements sur l'Agenda" value={stats.detailsLive.agenda} color="text-blue-600" />
                       </a>
-                      <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                      <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
                         <StatItem label="Sorties de Jeux" value={stats.detailsLive.jeux} color="text-orange-600" />
                       </a>
+
+            {/* --- AJOUTS STATIQUES ICI --- */}
+            <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+              <StatItem label="Podcasts sortie de livres" value={1708} color="text-emerald-600" />
+            </a>
+            <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+              <StatItem label="Livres suggérés" value={4266} color="text-amber-600" />
+            </a>
+            {/* ---------------------------- */}
+
                     </div>
                   </div>
 
@@ -138,7 +148,7 @@ export default function DashboardClient({
                   <div className="flex flex-col gap-3">
 {/* Bloc Articles publiés cliquable */}
 <a 
-  href="https://ftstoulouse.vercel.app/" 
+  href="https://ftstoulouse.online/" 
   target="_blank" 
   rel="noopener noreferrer" 
   className="group block"
@@ -156,7 +166,7 @@ export default function DashboardClient({
   </div>
 </a>
 
-                    <a href="https://ftstoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="group">
+                    <a href="https://ftstoulouse.online/" target="_blank" rel="noopener noreferrer" className="group">
                       <div className="bg-primary p-4 rounded-2xl shadow-lg shadow-primary/20 flex justify-between items-center text-white transition-all group-hover:bg-primary/90 group-hover:scale-[1.02]">
                         <div className="flex flex-col">
                           <span className="text-xs font-bold uppercase opacity-90">Total Sorties</span>
@@ -206,9 +216,9 @@ export default function DashboardClient({
         </Card>
       </div>
 
-{/* ✅ Carte 3 : Lien vers le Guide (ftstoulouse.vercel.app) */}
+{/* ✅ Carte 3 : Lien vers le Guide (ftstoulouse.online) */}
   <a 
-    href="https://ftstoulouse.vercel.app/" 
+    href="https://ftstoulouse.online/" 
     target="_blank" 
     rel="noopener noreferrer" 
     className="group"

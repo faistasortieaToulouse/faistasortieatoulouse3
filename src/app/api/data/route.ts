@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   // 1. Définition du fallback par défaut (au cas où même le fichier JSON manque)
   const defaultFallback = {
     totalLive: 0,
-    totalArticles: 216,
+    totalArticles: 271,
     detailsLive: { meetup: 0, cinema: 0, agenda: 0, jeux: 0 },
     timestamp: new Date().toLocaleString('fr-FR')
   };
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         totalLive,
-        totalArticles: 216,
+        totalArticles: 271,
         detailsLive: { meetup: mCount, cinema: cCount, agenda: aCount, jeux: jCount },
         timestamp: new Date().toLocaleString('fr-FR'),
         source: "live_radar"

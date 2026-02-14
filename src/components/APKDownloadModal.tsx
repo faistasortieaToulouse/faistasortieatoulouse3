@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 // Remplacez par le nom de fichier correct
-const APK_FILE_NAME = "app-release-signed.apk";
+const APK_FILE_NAME = "faistasortieatoulouse.apk";
 
 export default function APKDownloadModal() {
   return (
