@@ -15,6 +15,9 @@ const ENABLE_ADS = process.env.NEXT_PUBLIC_ENABLE_ADS === 'true';
 // Cette valeur est celle fictive de votre .env.local pour le moment.
 const ADSENSE_PUB_ID = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID || 'VOTRE_ID_ADSENSE_PUB'; 
 
+// Récupération de l'ID Analytics
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 export const metadata: Metadata = {
   title: 'Fais ta Sortie à Toulouse FTS',
   description: 'Application pour faire des sorties à Toulouse Fais Ta Sortie à Toulouse FTS, gratuit et sans limite, pour sortir à Toulouse',
@@ -33,6 +36,26 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+
+        {/* --- GOOGLE ANALYTICS --- */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
+        {/* ------------------------- */}
+
         {/* Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -66,6 +89,7 @@ export default function RootLayout({
         {/* Manifest PWA */}
         <link rel="manifest" href="/manifest.json" />
       </head>
+
       <body className="font-body antialiased">
         {children}
 
